@@ -97,7 +97,21 @@ def profile(username):
     # grab the session iser's username from the database
     username = mongo.db.users.find_one(
         {"username": session["user"]})["username"]
-    return render_template("profile.html", username=username)
+    
+    # Is a user cookie is present, render profile page
+    if session["user"]:
+        return render_template("profile.html", username=username)
+
+    # Else redirect the user to the login page
+    return redirect(url_for("login"))
+
+
+@app.route("/logout")
+def logout():
+    # remove user from session cookies
+    flash("You have been logged out")
+    session.pop("user")
+    return redirect(url_for("login"))
 
 
 if __name__ == "__main__":
